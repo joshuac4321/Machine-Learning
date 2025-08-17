@@ -102,22 +102,30 @@ def get_predictions(a2):
 #for x, y in matrix Y and matrix p (predictions), if x == y, true (true = 1, false = 0), 
 #sum all true, divide by label
 def get_accuracy(Y, p):
-    print(np.sum(Y == p))
-    print(Y.size)
+    # print(np.sum(Y == p))
+    # print(Y.size)
+    # print("psize")
+    # print(p.size)
     return(np.sum(Y == p)/ Y.size)
     
 #predictions are returned from the get_predictions function which accesses the argmax of A2 from the 
 #first axis, returning the index
 #find current image, find prediction and label, display image with .gray, .imshow
-index = random.randint(1, 2000)
+index = random.randint(1,40000)
 def display_predictions(X, Y, a2):
-    print("Accuracy:", get_accuracy(Y, get_predictions(a2[:,index])))
+    print("Accuracy:", get_accuracy(Y, get_predictions(a2))*100, "%")
+    print("Prediction: ", get_predictions(a2[:,index]))
+    print("Label:", Y[index])
+
+def display_predictions2(X, Y, a2):
+    index = input("Index: ")
+    print("Accuracy:", get_accuracy(Y, get_predictions(a2))*100, "%")
     print("Prediction: ", get_predictions(a2[:,index]))
     print("Label:", Y[index])
     X = X*255
     img_array = X[:, index].reshape(28,28)
     plt.imshow(img_array, cmap='gray')
-    #plt.show()
+    plt.show()
 
 #apply forwardprop, backprop, and update params to run gradient descent, as well as for every 10th
 #iteration, display image and 
@@ -129,11 +137,13 @@ def gradient_descent(X, Y, alpha, iterations):
         w1, b1, w2, b2 = update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha)
         if x % 10 == 0:
             print("Epoch:" + str(x))
-            display_predictions(X, Y, a2)
-            rand = random.randint(1,40000)
-            print(Y[rand:rand+37])
-            print(np.argmax(a2, 0)[rand:rand+37])
-            print(np.sum(Y[rand:rand+37] == (np.argmax(a2, 0)[rand:rand+37])))
+    while True:
+        display_predictions(X, Y, a2)
+            # rand = random.randint(1,40000)
+            # print(Y[rand:rand+37])
+            # print(np.argmax(a2, 0)[rand:rand+37])
+            # print(np.sum(Y[rand:rand+37] == (np.argmax(a2, 0)[rand:rand+37])))
+            # print(a2.shape)
         # print("DW2")
         # print(dw2[0])
         # print("DB2")
@@ -152,9 +162,9 @@ def gradient_descent(X, Y, alpha, iterations):
         # print(b1)
         # print("W2")
         # print(w2)
-        """
+    """
         28
         34
         32
         """
-gradient_descent(xtrain, labeltrain, 0.1, 10000)
+gradient_descent(xtrain, labeltrain, 0.1, 500)
