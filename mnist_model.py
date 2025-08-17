@@ -34,9 +34,10 @@ xtrain = xtrain/255.
 
 #initialize random params between -0.5 and 0.5, prevents vanishing or exploding gradients
 def init_params():
-    w1 = np.random.rand(10, 784)-0.5
+    xavierinit = np.sqrt(6/(784+10))
+    w1 = np.random.uniform(-xavierinit, xavierinit, (10, 784))
     b1 = np.random.rand(10, 1)-0.5
-    w2 = np.random.rand(10, 10)-0.5
+    w2 = np.random.uniform(-xavierinit, xavierinit, (10, 10))   
     b2 = np.random.rand(10, 1)-0.5
     return w1, b1, w2, b2
 
