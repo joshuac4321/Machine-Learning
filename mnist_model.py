@@ -143,4 +143,4 @@ def gradient_descent(X, Y, alpha, iterations):
         # print(b1)
         # print("W2")
         # print(w2)
-gradient_descent(xtrain, labeltrain, 1, 10000)
+gradient_descent(xtrain, labeltrain, 0.1, 10000)
