@@ -5,6 +5,8 @@ from matplotlib import pyplot as plt
 import sys
 import random
 
+np.set_printoptions(threshold=sys.maxsize)
+
 #load data using pandas
 pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\train.csv\train.csv")
 
@@ -100,6 +102,8 @@ def get_predictions(a2):
 #for x, y in matrix Y and matrix p (predictions), if x == y, true (true = 1, false = 0), 
 #sum all true, divide by label
 def get_accuracy(Y, p):
+    print(np.sum(Y == p))
+    print(Y.size)
     return(np.sum(Y == p)/ Y.size)
     
 #predictions are returned from the get_predictions function which accesses the argmax of A2 from the 
@@ -126,6 +130,10 @@ def gradient_descent(X, Y, alpha, iterations):
         if x % 10 == 0:
             print("Epoch:" + str(x))
             display_predictions(X, Y, a2)
+            rand = random.randint(1,40000)
+            print(Y[rand:rand+37])
+            print(np.argmax(a2, 0)[rand:rand+37])
+            print(np.sum(Y[rand:rand+37] == (np.argmax(a2, 0)[rand:rand+37])))
         # print("DW2")
         # print(dw2[0])
         # print("DB2")
@@ -144,4 +152,9 @@ def gradient_descent(X, Y, alpha, iterations):
         # print(b1)
         # print("W2")
         # print(w2)
+        """
+        28
+        34
+        32
+        """
 gradient_descent(xtrain, labeltrain, 0.1, 10000)
