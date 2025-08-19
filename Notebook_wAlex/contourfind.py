@@ -1,4 +1,4 @@
-#import neccesary libraries
+# import neccesary libraries
 import numpy as np
 import pandas
 from matplotlib import pyplot as plt
@@ -9,6 +9,8 @@ pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\train.csv\train.csv")
 
 #convert data to np array for matrix operations
 data = np.array(pandadata).T
+
+fig, axes = plt.subplots(2, 1)
 
 idx = random.randint(1,30000)
 #validation set
@@ -52,11 +54,13 @@ for x in range(len(xvalid)):
     xvalid = xvalid.T
     xvalid = xvalid.reshape(784)
 
-xcontourmax = max(xcontourlist)+1
-xcontourmin = min(xcontourlist)-1
+xcontourmax = max(xcontourlist)+28
+xcontourmin = min(xcontourlist)-28
 
-ycontourmax = max(ycontourlist)+28
-ycontourmin = min(ycontourlist)-28
+ycontourmax = max(ycontourlist)+1
+ycontourmin = min(ycontourlist)-1
+
+# for x in range(28):
 
 for x in xcontourlist:
     xcontour[x] = 255
@@ -73,6 +77,6 @@ ycontour_array = ycontour.reshape(28,28)
 ycontour_array = ycontour_array.T
 
 img_array = xcontour_array + ycontour_array
-plt.imshow(img_array, cmap='gray')
+axes[0].imshow(xcontour_array, cmap='gray')
+plt.imshow(ycontour_array, cmap='gray')
 plt.show()
-
