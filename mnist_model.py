@@ -32,8 +32,6 @@ labeltrain = data[0, 2000:]
 xtrain = data[1:785, 2000:]
 xtrain = xtrain/255.
 
-
-
 #initialize random params between -0.5 and 0.5, prevents vanishing or exploding gradients
 def init_params():
     xavierinit = np.sqrt(6/(784+10))
@@ -119,6 +117,7 @@ def display_predictions(X, Y, a2):
 
 def display_predictions2(X, Y, a2):
     index = input("Index: ")
+    index = int(index)
     print("Accuracy:", get_accuracy(Y, get_predictions(a2))*100, "%")
     print("Prediction: ", get_predictions(a2[:,index]))
     print("Label:", Y[index])
@@ -129,16 +128,19 @@ def display_predictions2(X, Y, a2):
 
 #apply forwardprop, backprop, and update params to run gradient descent, as well as for every 10th
 #iteration, display image and 
-def gradient_descent(X, Y, alpha, iterations):
+def gradient_descent(X, Y, X2, Y2, alpha, iterations):
+    iterations = iterations + 1
     w1, b1, w2, b2 = init_params()
     for x in range(iterations):
         z1, a1, z2, a2 = forwardprop(w1, b1, w2, b2, X)
         dw2, db2, dw1, db1, dz2, dz1 = back_prop(w2, z1, a1, z2, a2, X, Y)
         w1, b1, w2, b2 = update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha)
+        
         if x % 10 == 0:
             print("Epoch:" + str(x))
+            display_predictions(X, Y, a2)
     while True:
-        display_predictions(X, Y, a2)
+        display_predictions2(X, Y, a2)
             # rand = random.randint(1,40000)
             # print(Y[rand:rand+37])
             # print(np.argmax(a2, 0)[rand:rand+37])
@@ -167,4 +169,4 @@ def gradient_descent(X, Y, alpha, iterations):
         34
         32
         """
-gradient_descent(xtrain, labeltrain, 0.1, 500)
+gradient_descent(xtrain, labeltrain, xvalid, labelvalid, 0.1, 500)
