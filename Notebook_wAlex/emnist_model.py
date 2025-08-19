@@ -112,19 +112,32 @@ def get_accuracy(Y, p):
 index = random.randint(1,40000)
 def display_predictions(X, Y, a2):
     print("Accuracy:", get_accuracy(Y, get_predictions(a2))*100, "%")
-    print("Prediction: ", get_predictions(a2[:,index]))
-    print("Label:", Y[index])
+    print("Prediction: ", decode(get_predictions(a2[:,index])))
+    print("Label:", decode(Y[index]))
+    print()
 
 def display_predictions2(X, Y, a2):
     index = input("Index: ")
     index = int(index)
     print("Accuracy:", get_accuracy(Y, get_predictions(a2))*100, "%")
-    print("Prediction: ", get_predictions(a2[:,index]))
-    print("Label:", Y[index])
+    print("Prediction: ", decode(get_predictions(a2[:,index])))
+    print("Label:", decode(Y[index]))
+    print()
     X = X*255
     img_array = X[:, index].reshape(28,28)
+    img_array = img_array.T
     plt.imshow(img_array, cmap='gray')
     plt.show()
+
+def decode(number):
+    with open(r"C:\Users\chenl\OneDrive\Documents\GitHub\Machine-Learning\Notebook_wAlex\emnist_balanced_mapping.txt", 'r') as mapping:
+        convert = mapping.readlines()
+        for line in convert:
+            linenum, unicodedecode = line.split()
+            linenum = int(linenum)
+            unicodedecode = chr(int(unicodedecode))
+            if number == linenum:
+                return unicodedecode
 
 #apply forwardprop, backprop, and update params to run gradient descent, as well as for every 10th
 #iteration, display image and 
@@ -138,7 +151,7 @@ def gradient_descent(X, Y, X2, Y2, alpha, iterations):
         
         if x % 10 == 0:
             print("Epoch:" + str(x))
-            display_predictions(X, Y, a2)
+            display_predictions2(X, Y, a2)
     while True:
         display_predictions2(X, Y, a2)
             # rand = random.randint(1,40000)
