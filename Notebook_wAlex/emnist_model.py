@@ -9,27 +9,38 @@ np.set_printoptions(threshold=sys.maxsize)
 
 #load data using pandas
 pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\emnist-balanced-train.csv\emnist-balanced-train.csv")
+pandadatavalid = pandas.read_csv(r"C:\Users\chenl\Downloads\emnist-balanced-test.csv\emnist-balanced-test.csv")
 
 #convert data to np array for matrix operations
 data = np.array(pandadata).T
+datavalid = np.array(pandadatavalid).T
 
 data = data.T
 np.random.shuffle(data)
 data = data.T
 
+datavalid = datavalid.T
+np.random.shuffle(datavalid)
+datavalid = datavalid.T
+
+print(datavalid.shape)
+print(data.shape)
+
 #shape of data
 m, n = data.shape
+
+m2, n2 = datavalid.shape
 
 # shuffle before splitting into dev and training sets
 
 #validation set
-labelvalid = data[0, :2000]
-xvalid = data[1:785, :2000]
+labelvalid = data[0]
+xvalid = data[1:785]
 xvalid = xvalid/255.
 
 #training set, prevents overfitting
-labeltrain = data[0, 2000:]
-xtrain = data[1:785, 2000:]
+labeltrain = data[0, :]
+xtrain = data[1:785, :]
 xtrain = xtrain/255.
 
 #initialize random params between -0.5 and 0.5, prevents vanishing or exploding gradients
@@ -73,16 +84,16 @@ def one_hot(Y):
 
 #backprop through the network and adjust weights accordingly
 #cross entropy loss chain rule
-def back_prop(w2, z1, a1, z2, a2, X, Y):
+def back_prop(w2, z1, a1, z2, a2, N, X, Y):
     one_hot_Y = one_hot(Y)
     dz2 = a2.T - one_hot_Y.T 
     dz2 = dz2.T
-    dw2 = 1 / n * dz2.dot(a1.T)
-    db2 = 1 / n * np.sum(dz2)
+    dw2 = 1 / N * dz2.dot(a1.T)
+    db2 = 1 / N * np.sum(dz2)
     dz1 = w2.T.dot(dz2) * ReLU_deriv(z1)
-    dw1 = 1 / n * dz1.dot(X.T)
-    db1 = 1 / n * np.sum(dz1)
-    return dw2, db2, dw1, db1, dz2, dz1
+    dw1 = 1 / N * dz1.dot(X.T)
+    db1 = 1 / N * np.sum(dz1)
+    return dw2, db2, dw1, db1
 
 #subtracts matrix from matrix, makes the correct ones closer to 1, W := W− α ⋅ gradient
 #update parameters with the gradient, W := W− α ⋅ gradient
@@ -100,10 +111,6 @@ def get_predictions(a2):
 #for x, y in matrix Y and matrix p (predictions), if x == y, true (true = 1, false = 0), 
 #sum all true, divide by label
 def get_accuracy(Y, p):
-    # print(np.sum(Y == p))
-    # print(Y.size)
-    # print("psize")
-    # print(p.size)
     return(np.sum(Y == p)/ Y.size)
     
 #predictions are returned from the get_predictions function which accesses the argmax of A2 from the 
@@ -141,45 +148,34 @@ def decode(number):
 
 #apply forwardprop, backprop, and update params to run gradient descent, as well as for every 10th
 #iteration, display image and 
-def gradient_descent(X, Y, X2, Y2, alpha, iterations):
+def gradient_descent(X, Y, X2, Y2, alpha, iterations, validiterations):
     iterations = iterations + 1
     w1, b1, w2, b2 = init_params()
     for x in range(iterations):
         z1, a1, z2, a2 = forwardprop(w1, b1, w2, b2, X)
-        dw2, db2, dw1, db1, dz2, dz1 = back_prop(w2, z1, a1, z2, a2, X, Y)
+        dw2, db2, dw1, db1 = back_prop(w2, z1, a1, z2, a2, n, X, Y)
         w1, b1, w2, b2 = update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha)
         
         if x % 10 == 0:
             print("Epoch:" + str(x))
-            display_predictions2(X, Y, a2)
+            display_predictions(X, Y, a2)
+    
+    for x in range(validiterations):
+        z1, a1, z2, a2 = forwardprop(w1, b1, w2, b2, X2)
+        dw2, db2, dw1, db1 = back_prop(w2, z1, a1, z2, a2, n2, X2, Y2)
+        w1, b1, w2, b2 = update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha)
+
+        if x % 10 == 0:
+            print("Validation Epoch:" + str(x))
+            display_predictions(X, Y, a2)
+
+    with open("emnistweightsbias.txt", "w") as file:
+        file.write(str(w1))
+        file.write(str(b1))
+        file.write(str(w2))
+        file.write(str(b2))
+    
     while True:
         display_predictions2(X, Y, a2)
-            # rand = random.randint(1,40000)
-            # print(Y[rand:rand+37])
-            # print(np.argmax(a2, 0)[rand:rand+37])
-            # print(np.sum(Y[rand:rand+37] == (np.argmax(a2, 0)[rand:rand+37])))
-            # print(a2.shape)
-        # print("DW2")
-        # print(dw2[0])
-        # print("DB2")
-        # print(db2)
-        # print("DW1")
-        # print(dw1[0])
-        # print("DW1")
-        # print(db1)
-        # print("DZ2")
-        # print(dz2)
-        # print("DZ1")
-        # print(dz1)
-        # print("W1")
-        # print(w1)
-        # print("B1")
-        # print(b1)
-        # print("W2")
-        # print(w2)
-    """
-        28
-        34
-        32
-        """
-gradient_descent(xtrain, labeltrain, xvalid, labelvalid, 0.1, 10000)
+
+gradient_descent(xtrain, labeltrain, xvalid, labelvalid, 0.1, 10000, 1000)

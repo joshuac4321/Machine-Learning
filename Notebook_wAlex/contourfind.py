@@ -3,6 +3,7 @@ import numpy as np
 import pandas
 from matplotlib import pyplot as plt
 import random
+import math
 
 #load data using pandas
 pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\train.csv\train.csv")
@@ -25,6 +26,10 @@ ycontourlist = []
 
 xcontour = np.zeros((784,1))
 ycontour = np.zeros((784,1))
+
+def mod(number, divisor):
+    l = number//divisor
+    return l*divisor-number
 
 for x in range(len(xvalid)):
     if xvalid[x] > 0:
@@ -54,20 +59,8 @@ for x in range(len(xvalid)):
     xvalid = xvalid.T
     xvalid = xvalid.reshape(784)
 
-xcontourmax = max(xcontourlist)+28
-xcontourmin = min(xcontourlist)-28
-
-ycontourmax = max(ycontourlist)+1
-ycontourmin = min(ycontourlist)-1
-
-# for x in range(28):
-
 for x in xcontourlist:
     xcontour[x] = 255
-    xcontour[xcontourmax] = 255
-    ycontour[ycontourmax] = 255
-    xcontour[xcontourmin] = 255
-    ycontour[xcontourmin] = 255
 
 for x in ycontourlist:
     ycontour[x] = 255
@@ -77,6 +70,35 @@ ycontour_array = ycontour.reshape(28,28)
 ycontour_array = ycontour_array.T
 
 img_array = xcontour_array + ycontour_array
+img_array = img_array.reshape(784)
+box = []
+xbox = []
+ybox = []
+for x in range(len(img_array)):
+    if img_array[x] != 0:
+        img_array[x] = 255
+        box.append(x)
+
+for x in box:
+    xbox.append(x//28)
+    ybox.append(mod(x, 28))
+
+xmax = xbox.index(max(xbox))
+xmin = xbox.index(min(xbox))
+ymax = ybox.index(max(ybox))
+ymin = ybox.index(min(ybox))
+
+yavg = (xmax+xmin)//2
+xavg = ((2*ymin + mod(ymax-ymin,28))//2)
+
+img_array[box[xavg]] = 500
+img_array[box[yavg]] = 500
+
+img_array = img_array.reshape(28, 28)
+
+img_array[mod(box[xavg], 28)][box[yavg]//28] = 500
+
 axes[0].imshow(xcontour_array, cmap='gray')
-plt.imshow(ycontour_array, cmap='gray')
+axes[1].imshow(ycontour_array, cmap='gray')
+plt.imshow(img_array, cmap='gray')
 plt.show()
