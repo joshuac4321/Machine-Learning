@@ -43,9 +43,39 @@ labeltrain = data[0, :]
 xtrain = data[1:785, :]
 xtrain = xtrain/255.
 
+def augment(X):
+    for img in X:
+        aug = random.randint(1,6)
+        if aug == 1:
+            img = img.reshape(28,28)
+            img = img.T
+            img = img.reshape(784)
+        if aug == 2:
+            for pixel in img:
+                if pixel != 0:
+                    pixel -= 100
+        if aug == 3:
+            for pixel in img:
+                if pixel == 0:
+                    randpixel = random.randint(1,40)
+                    if randpixel == 1:
+                        pixel = 100
+        if aug == 4:
+            img = img.reshape(28,28)
+            img = img.T
+            img = img.reshape(784)
+            for pixel in img:
+                if pixel >= 200:
+                    pixel -= 100
+                if pixel == 0:
+                    randpixel = random.randint(1,40)
+                    if randpixel == 1:
+                        pixel = 100
+    return X
+
 #initialize random params between -0.5 and 0.5, prevents vanishing or exploding gradients
 def init_params():
-    xavierinit = np.sqrt(6/(784+10))
+    xavierinit = np.sqrt(6/(784+47))
     w1 = np.random.uniform(-xavierinit, xavierinit, (47, 784))
     b1 = np.random.rand(47, 1)-0.5
     w2 = np.random.uniform(-xavierinit, xavierinit, (47, 47))   
@@ -80,12 +110,16 @@ def ReLU_deriv(Z):
 def one_hot(Y):
     one_hot_Y = np.zeros((Y.max()+1, Y.size))
     one_hot_Y[Y, np.arange(Y.size)] = 1
+    print(one_hot_Y.shape)
+    print(Y.shape)
+    print(np.arange(Y.size).shape)
     return one_hot_Y
 
 #backprop through the network and adjust weights accordingly
 #cross entropy loss chain rule
 def back_prop(w2, z1, a1, z2, a2, N, X, Y):
     one_hot_Y = one_hot(Y)
+    print(a2.shape)
     dz2 = a2.T - one_hot_Y.T 
     dz2 = dz2.T
     dw2 = 1 / N * dz2.dot(a1.T)

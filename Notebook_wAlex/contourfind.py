@@ -31,6 +31,12 @@ def mod(number, divisor):
     l = number//divisor
     return l*divisor-number
 
+shapelist = []
+
+def shape(imgarray, idx):
+    img_array[idx]
+    shape(idx)
+
 for x in range(len(xvalid)):
     if xvalid[x] > 0:
         templist.append(x)
