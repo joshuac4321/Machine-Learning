@@ -37,6 +37,8 @@ xvalid = xvalid/255.
 xtrain = data[:, 0:785]
 
 def augment(img):
+    temp = img[0]
+    img = img[1:785]
     aug = random.randint(1,6)
     if aug == 1:
         img = img.reshape(28,28)
@@ -63,6 +65,9 @@ def augment(img):
                 randpixel = random.randint(1,40)
                 if randpixel == 1:
                     pixel = 100
+    
+    img = np.insert(img, 0, temp) 
+
     return img
 
 def init_params():
@@ -87,28 +92,45 @@ def forwardprop(w1, b1, w2, b2, X):
     a1 = ReLU(z1)
     z2 = np.dot(w2, a1) + b2
     a2 = softmax(z2)
+    print(w1.shape)
+    print(X.shape)
+    print(z1.shape)
+    print(a1.shape)
+    print(z2.shape)
+    print(a2.shape)
     return z1, a1, z2, a2
 
 def one_hot(Y):
-    print(Y)
-    one_hot_Y = np.zeros(Y.size)
+    one_hot_Y = np.zeros(47)
     one_hot_Y[Y] = 1
-    print(one_hot_Y.shape)
-    print(Y.shape)
-    print(np.arange(Y.size).shape)
     return one_hot_Y
 
 def back_prop(w2, z1, a1, z2, a2, X, Y):
     one_hot_Y = one_hot(Y)
-    print(a2.shape)
-    dz2 = a2 - one_hot_Y.T
-    dz2 = dz2.T
-    dw2 = dz2.dot(a1.T)
+    dz2 = a2 - one_hot_Y
+    dw2 = dz2.dot(a1)
     db2 = np.sum(dz2)
-    dz1 = w2.T.dot(dz2) * ReLU_deriv(z1)
-    dw1 = dz1.dot(X.T)
+    dz1 = w2.dot(dz2) * ReLU_deriv(z1)
+    # print(Y.shape)
+    # print(X.shape)
+    # print(a2.shape)
+    # print(one_hot_Y.shape)
+    # print(dz2.shape)
+    # print(dw2.shape)
+    # print(dz1.shape)
+    dw1 = dz1.T.dot(X.T)
     db1 = np.sum(dz1)
     return dw2, db2, dw1, db1
+
+(1,)
+(784,)
+(47, 47)
+(47, 47)
+
+(47, 112799)
+(784, 112799)
+(47, 112799)
+(47, 47)
 
 def update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha):
     w1 = w1 - alpha * dw1

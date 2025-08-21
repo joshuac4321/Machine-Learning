@@ -96,6 +96,10 @@ def forwardprop(w1, b1, w2, b2, X):
     a1 = ReLU(z1)
     z2 = np.dot(w2, a1) + b2
     a2 = softmax(z2)
+    print(z1.shape)
+    print(a1.shape)
+    print(z2.shape)
+    print(a2.shape)
     return z1, a1, z2, a2
 
 #returns derivative of ReLU, 1 if greater than 0, 0 if less (true and false)
@@ -110,16 +114,12 @@ def ReLU_deriv(Z):
 def one_hot(Y):
     one_hot_Y = np.zeros((Y.max()+1, Y.size))
     one_hot_Y[Y, np.arange(Y.size)] = 1
-    print(one_hot_Y.shape)
-    print(Y.shape)
-    print(np.arange(Y.size).shape)
     return one_hot_Y
 
 #backprop through the network and adjust weights accordingly
 #cross entropy loss chain rule
 def back_prop(w2, z1, a1, z2, a2, N, X, Y):
     one_hot_Y = one_hot(Y)
-    print(a2.shape)
     dz2 = a2.T - one_hot_Y.T 
     dz2 = dz2.T
     dw2 = 1 / N * dz2.dot(a1.T)
@@ -129,8 +129,8 @@ def back_prop(w2, z1, a1, z2, a2, N, X, Y):
     db1 = 1 / N * np.sum(dz1)
     return dw2, db2, dw1, db1
 
-#subtracts matrix from matrix, makes the correct ones closer to 1, W := W− α ⋅ gradient
-#update parameters with the gradient, W := W− α ⋅ gradient
+#subtracts matrix from matrix, makes the correct ones closer to 1, W := W − α ⋅ gradient
+#update parameters with the gradient, W := W − α ⋅ gradient
 def update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha):
     w1 = w1 - alpha * dw1
     b1 = b1 - alpha * db1
@@ -186,7 +186,7 @@ def gradient_descent(X, Y, X2, Y2, alpha, iterations, validiterations):
     iterations = iterations + 1
     w1, b1, w2, b2 = init_params()
     for x in range(iterations):
-        z1, a1, z2, a2 = forwardprop(w1, b1, w2, b2, X)
+        z1, a1, z2,   a2 = forwardprop(w1, b1, w2, b2, X)
         dw2, db2, dw1, db1 = back_prop(w2, z1, a1, z2, a2, n, X, Y)
         w1, b1, w2, b2 = update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha)
         
