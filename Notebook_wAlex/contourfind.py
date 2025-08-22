@@ -19,92 +19,105 @@ xvalid = data[1:785, idx]
 xvalidNorm = np.where(xvalid > 0, 255, 0)
 xvalidNorm = xvalidNorm.reshape(28, 28)
 
-templist = []
-templist2 = []
-xcontourlist = []
-ycontourlist = []
-
-xcontour = np.zeros((784,1))
-ycontour = np.zeros((784,1))
+def grayscale(img):
+    for pixel in img:
+        pixel = np.sum(pixel)/3
 
 def mod(number, divisor):
     l = number//divisor
     return l*divisor-number
 
-shapelist = []
+shapelist = [-29, -28, -27, -1, 1, 27, 28, 29]
 
-def shape(imgarray, idx):
-    img_array[idx]
+def shape(img_array, idx):
+    for index in shapelist:
+        prev = idx
+        if img_array(img_array[idx + index]) != 0:
+            prev = idx
+    prev = 0
+    img_array[idx]     
     shape(idx)
 
-for x in range(len(xvalid)):
-    if xvalid[x] > 0:
-        templist.append(x)
+def contour(img):
+    m, n = img.shape
 
-    if xvalid[x] <= 0 and len(templist) != 0:
-        xcontourlist.append(templist[0])
-        xcontourlist.append(templist[-1])        
-        templist = []
+    img = img.reshape(m*n)
 
-    xvalid = xvalid.reshape(28,28)
-    
-    xvalid = xvalid.T
-    xvalid = xvalid.T
-    xvalid = xvalid.T
+    templist = []
+    templist2 = []
+    xcontourlist = []
+    ycontourlist = []
 
-    xvalid = xvalid.reshape(784)
+    xcontour = np.zeros((img.size,1))
+    ycontour = np.zeros((img.size,1))
+    for x in range(len(img)):
+        img = img.reshape(m*n)
+        if img[x] > 0:
+            templist.append(x)
 
-    if xvalid[x] > 0:
-        templist2.append(x)
-    if xvalid[x] <= 0 and len(templist2) != 0:
-        ycontourlist.append(templist2[0])
-        ycontourlist.append(templist2[-1])        
-        templist2 = []
-    
-    xvalid = xvalid.reshape(28,28)
-    xvalid = xvalid.T
-    xvalid = xvalid.reshape(784)
+        if img[x] <= 0 and len(templist) != 0:
+            xcontourlist.append(templist[0])
+            xcontourlist.append(templist[-1])        
+            templist = []
 
-for x in xcontourlist:
-    xcontour[x] = 255
+        img = img.reshape(m, n)
+        
+        img = img.T
+        img = img.T
+        img = img.T
 
-for x in ycontourlist:
-    ycontour[x] = 255
+        img = img.reshape(m*n)
 
-xcontour_array = xcontour.reshape(28,28)
-ycontour_array = ycontour.reshape(28,28)
-ycontour_array = ycontour_array.T
+        if img[x] > 0:
+            templist2.append(x)
+        if img[x] <= 0 and len(templist2) != 0:
+            ycontourlist.append(templist2[0])
+            ycontourlist.append(templist2[-1])        
+            templist2 = []
+        
+        img = img.reshape(m, n)
+        img = img.T
 
-img_array = xcontour_array + ycontour_array
-img_array = img_array.reshape(784)
-box = []
-xbox = []
-ybox = []
-for x in range(len(img_array)):
-    if img_array[x] != 0:
-        img_array[x] = 255
-        box.append(x)
+        for x in xcontourlist:
+            xcontour[x] = 255
 
-for x in box:
-    xbox.append(x//28)
-    ybox.append(mod(x, 28))
+        for x in ycontourlist:
+            ycontour[x] = 255
 
-xmax = xbox.index(max(xbox))
-xmin = xbox.index(min(xbox))
-ymax = ybox.index(max(ybox))
-ymin = ybox.index(min(ybox))
+    xcontour_array = xcontour.reshape(m, n)
+    ycontour_array = ycontour.reshape(m, n)
+    ycontour_array = ycontour_array.T
+    img_array = xcontour_array + ycontour_array
+    return img_array
 
-yavg = (xmax+xmin)//2
-xavg = ((2*ymin + mod(ymax-ymin,28))//2)
+# img_array = contour(xvalid)
+# img_array = img_array.reshape(784)
+# box = []
+# xbox = []
+# ybox = []
+# for x in range(len(img_array)):
+#     if img_array[x] != 0:
+#         img_array[x] = 255
+#         box.append(x)
 
-img_array[box[xavg]] = 500
-img_array[box[yavg]] = 500
+# for x in box:
+#     xbox.append(x//28)
+#     ybox.append(mod(x, 28))
 
-img_array = img_array.reshape(28, 28)
+# xmax = xbox.index(max(xbox))
+# xmin = xbox.index(min(xbox))
+# ymax = ybox.index(max(ybox))
+# ymin = ybox.index(min(ybox))
 
-img_array[mod(box[xavg], 28)][box[yavg]//28] = 500
+# yavg = (xmax+xmin)//2
+# xavg = ((2*ymin + mod(ymax-ymin,28))//2)
 
-axes[0].imshow(xcontour_array, cmap='gray')
-axes[1].imshow(ycontour_array, cmap='gray')
-plt.imshow(img_array, cmap='gray')
-plt.show()
+# img_array[box[xavg]] = 500
+# img_array[box[yavg]] = 500
+
+# img_array = img_array.reshape(28, 28)
+
+# img_array[mod(box[xavg], 28)][box[yavg]//28] = 500
+
+# plt.imshow(img_array, cmap='gray')
+# plt.show()
