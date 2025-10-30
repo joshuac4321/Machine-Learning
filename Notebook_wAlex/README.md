@@ -1,19 +1,29 @@
 **import neccesary libraries**
-```markdown 
-This Python function demonstrates a simple "Hello, World!" message.
-```python
 
+Numpy: useful array operations
+Pandas: load data
+Pyplot: display data
+
+
+```
 import numpy as np
 import pandas
 from matplotlib import pyplot as plt
 import sys
 import random
+```
+Allows debugging for large numbers
 
+```
 np.set_printoptions(threshold=sys.maxsize)
+```
 
-#load data using pandas
+Load data with pandas.read_csv()
+
+```
 pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\emnist-balanced-train.csv\emnist-balanced-train.csv")
 pandadatavalid = pandas.read_csv(r"C:\Users\chenl\Downloads\emnist-balanced-test.csv\emnist-balanced-test.csv")
+```
 
 #convert data to np array for matrix operations
 data = np.array(pandadata).T
