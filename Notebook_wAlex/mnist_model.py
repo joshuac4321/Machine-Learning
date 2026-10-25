@@ -8,7 +8,7 @@ import random
 np.set_printoptions(threshold=sys.maxsize)
 
 #load data using pandas
-pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\train.csv\train.csv")
+pandadata = pandas.read_csv(r"C:\Users\Administrator\Downloads\train.csv\train.csv")
 
 #convert data to np array for matrix operations
 data = np.array(pandadata).T
@@ -35,9 +35,9 @@ xtrain = xtrain/255.
 #initialize random params between -0.5 and 0.5, prevents vanishing or exploding gradients
 def init_params():
     xavierinit = np.sqrt(6/(784+10))
-    w1 = np.random.uniform(-xavierinit, xavierinit, (10, 784))
-    b1 = np.random.rand(10, 1)-0.5
-    w2 = np.random.uniform(-xavierinit, xavierinit, (10, 10))   
+    w1 = np.random.uniform(-xavierinit, xavierinit, (256, 784))
+    b1 = np.random.rand(256, 1)-0.5
+    w2 = np.random.uniform(-xavierinit, xavierinit, (10, 256))   
     b2 = np.random.rand(10, 1)-0.5
     return w1, b1, w2, b2
 
@@ -84,8 +84,8 @@ def back_prop(w2, z1, a1, z2, a2, X, Y):
     db1 = 1 / n * np.sum(dz1)
     return dw2, db2, dw1, db1, dz2, dz1
 
-#subtracts matrix from matrix, makes the correct ones closer to 1, W := W− α ⋅ gradient
-#update parameters with the gradient, W := W− α ⋅ gradient
+#subtracts matrix from matrix, makes the correct ones closer to 1, W := W − α ⋅ gradient
+#update parameters with the gradient, W := W − α ⋅ gradient
 def update_params(w1, b1, w2, b2, dw1, db1, dw2, db2, alpha):
     w1 = w1 - alpha * dw1
     b1 = b1 - alpha * db1
@@ -100,10 +100,6 @@ def get_predictions(a2):
 #for x, y in matrix Y and matrix p (predictions), if x == y, true (true = 1, false = 0), 
 #sum all true, divide by label
 def get_accuracy(Y, p):
-    # print(np.sum(Y == p))
-    # print(Y.size)
-    # print("psize")
-    # print(p.size)
     return(np.sum(Y == p)/ Y.size)
     
 #predictions are returned from the get_predictions function which accesses the argmax of A2 from the 
@@ -118,6 +114,7 @@ def display_predictions(X, Y, a2):
 def display_predictions2(X, Y, a2):
     index = input("Index: ")
     index = int(index)
+
     print("Accuracy:", get_accuracy(Y, get_predictions(a2))*100, "%")
     print("Prediction: ", get_predictions(a2[:,index]))
     print("Label:", Y[index])
@@ -129,7 +126,7 @@ def display_predictions2(X, Y, a2):
 #apply forwardprop, backprop, and update params to run gradient descent, as well as for every 10th
 #iteration, display image and 
 def gradient_descent(X, Y, X2, Y2, alpha, iterations):
-    iterations = iterations + 1
+    iterations += 1
     w1, b1, w2, b2 = init_params()
     for x in range(iterations):
         z1, a1, z2, a2 = forwardprop(w1, b1, w2, b2, X)
@@ -141,32 +138,5 @@ def gradient_descent(X, Y, X2, Y2, alpha, iterations):
             display_predictions(X, Y, a2)
     while True:
         display_predictions2(X, Y, a2)
-            # rand = random.randint(1,40000)
-            # print(Y[rand:rand+37])
-            # print(np.argmax(a2, 0)[rand:rand+37])
-            # print(np.sum(Y[rand:rand+37] == (np.argmax(a2, 0)[rand:rand+37])))
-            # print(a2.shape)
-        # print("DW2")
-        # print(dw2[0])
-        # print("DB2")
-        # print(db2)
-        # print("DW1")
-        # print(dw1[0])
-        # print("DW1")
-        # print(db1)
-        # print("DZ2")
-        # print(dz2)
-        # print("DZ1")
-        # print(dz1)
-        # print("W1")
-        # print(w1)
-        # print("B1")
-        # print(b1)
-        # print("W2")
-        # print(w2)
-    """
-        28
-        34
-        32
-        """
+            
 gradient_descent(xtrain, labeltrain, xvalid, labelvalid, 0.1, 500)

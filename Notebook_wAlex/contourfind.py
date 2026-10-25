@@ -6,7 +6,9 @@ import random
 import math
 
 #load data using pandas
-pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\train.csv\train.csv")
+pandadata = pandas.read_csv(r"C:\Users\Administrator\Downloads\train.csv\train.csv")
+
+print(pandadata)
 
 #convert data to np array for matrix operations
 data = np.array(pandadata).T
@@ -46,6 +48,7 @@ def contour(img):
     templist = []
     templist2 = []
     xcontourlist = []
+    
     ycontourlist = []
 
     xcontour = np.zeros((img.size,1))
@@ -63,8 +66,12 @@ def contour(img):
         img = img.reshape(m, n)
         
         img = img.T
+
         img = img.T
+
         img = img.T
+
+
 
         img = img.reshape(m*n)
 

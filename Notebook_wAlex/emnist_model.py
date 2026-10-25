@@ -8,8 +8,8 @@ import random
 np.set_printoptions(threshold=sys.maxsize)
 
 #load data using pandas
-pandadata = pandas.read_csv(r"C:\Users\chenl\Downloads\emnist-balanced-train.csv\emnist-balanced-train.csv")
-pandadatavalid = pandas.read_csv(r"C:\Users\chenl\Downloads\emnist-balanced-test.csv\emnist-balanced-test.csv")
+pandadata = pandas.read_csv(r"c:\Users\Administrator\Downloads\emnist-balanced-train.csv\emnist-balanced-train.csv")
+pandadatavalid = pandas.read_csv(r"c:\Users\Administrator\Downloads\emnist-balanced-test.csv\emnist-balanced-test.csv")
 
 #convert data to np array for matrix operations
 data = np.array(pandadata).T
@@ -47,9 +47,7 @@ def augment(X):
     for img in X:
         aug = random.randint(1,6)
         if aug == 1:
-            img = img.reshape(28,28)
-            img = img.T
-            img = img.reshape(784)
+            img = img.reshape(28,28).T.flatten()
         if aug == 2:
             for pixel in img:
                 if pixel != 0:
@@ -76,9 +74,9 @@ def augment(X):
 #initialize random params between -0.5 and 0.5, prevents vanishing or exploding gradients
 def init_params():
     xavierinit = np.sqrt(6/(784+47))
-    w1 = np.random.uniform(-xavierinit, xavierinit, (47, 784))
-    b1 = np.random.rand(47, 1)-0.5
-    w2 = np.random.uniform(-xavierinit, xavierinit, (47, 47))   
+    w1 = np.random.uniform(-xavierinit, xavierinit, (256, 784))
+    b1 = np.random.rand(256, 1)-0.5
+    w2 = np.random.uniform(-xavierinit, xavierinit, (47, 256))   
     b2 = np.random.rand(47, 1)-0.5
     return w1, b1, w2, b2
 
@@ -157,12 +155,10 @@ def display_predictions(X, Y, a2):
     print("Label:", decode(Y[index]))
     print()
 
-def display_predictions2(X, Y, a2):
+def display_results(X, Y, a2):
     index = input("Index: ")
     index = int(index)
-    print("Accuracy:", get_accuracy(Y, get_predictions(a2))*100, "%")
-    print("Prediction: ", decode(get_predictions(a2[:,index])))
-    print("Label:", decode(Y[index]))
+    display_predictions(X, Y, a2)
     print()
     X = X*255
     img_array = X[:, index].reshape(28,28)
@@ -171,7 +167,7 @@ def display_predictions2(X, Y, a2):
     plt.show()
 
 def decode(number):
-    with open(r"C:\Users\chenl\OneDrive\Documents\GitHub\Machine-Learning\Notebook_wAlex\emnist_balanced_mapping.txt", 'r') as mapping:
+    with open(r"Notebook_wAlex\data\emnist_balanced_mapping.txt", 'r') as mapping:
         convert = mapping.readlines()
         for line in convert:
             linenum, unicodedecode = line.split()
@@ -210,6 +206,6 @@ def gradient_descent(X, Y, X2, Y2, alpha, iterations, validiterations):
         file.write(str(b2))
     
     while True:
-        display_predictions2(X, Y, a2)
+        display_results(X, Y, a2)
 
 gradient_descent(xtrain, labeltrain, xvalid, labelvalid, 0.1, 10000, 1000)

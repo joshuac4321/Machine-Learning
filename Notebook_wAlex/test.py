@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-pandadata = Image.open(r"C:\Users\chenl\OneDrive\Documents\GitHub\Machine-Learning\Notebook_wAlex\handwriting.png")
+pandadata = Image.open(r"Machine-Learning\Notebook_wAlex\handwriting.png")
 
 data = np.array(pandadata)
 
