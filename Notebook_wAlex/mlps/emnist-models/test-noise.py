@@ -10,7 +10,6 @@ data = data.T
 
 img = data[1:785, 5]
 def noise(img):
-        imgcopy = img.copy()
         mask = np.random.choice(img.size, size = 20, replace = False)
         img[mask] = 100
         return img

@@ -12,19 +12,14 @@ pandadata = pandas.read_csv(r"c:\Users\Administrator\Downloads\emnist-balanced-t
 pandadatavalid = pandas.read_csv(r"c:\Users\Administrator\Downloads\emnist-balanced-test.csv\emnist-balanced-test.csv")
 
 #convert data to np array for matrix operations
-data = np.array(pandadata).T
-datavalid = np.array(pandadatavalid).T
+data = np.array(pandadata)
+datavalid = np.array(pandadatavalid)
 
-data = data.T
 np.random.shuffle(data)
 data = data.T
 
-datavalid = datavalid.T
 np.random.shuffle(datavalid)
 datavalid = datavalid.T
-
-print(datavalid.shape)
-print(data.shape)
 
 #shape of data
 m, n = data.shape
@@ -74,7 +69,9 @@ def augment(X):
 #initialize random params between -0.5 and 0.5, prevents vanishing or exploding gradients
 def init_params():
     xavierinit = np.sqrt(6/(784+47))
+    print(xavierinit)
     w1 = np.random.uniform(-xavierinit, xavierinit, (256, 784))
+    print(w1)
     b1 = np.random.rand(256, 1)-0.5
     w2 = np.random.uniform(-xavierinit, xavierinit, (47, 256))   
     b2 = np.random.rand(47, 1)-0.5
@@ -94,10 +91,6 @@ def forwardprop(w1, b1, w2, b2, X):
     a1 = ReLU(z1)
     z2 = np.dot(w2, a1) + b2
     a2 = softmax(z2)
-    print(z1.shape)
-    print(a1.shape)
-    print(z2.shape)
-    print(a2.shape)
     return z1, a1, z2, a2
 
 #returns derivative of ReLU, 1 if greater than 0, 0 if less (true and false)
@@ -105,10 +98,6 @@ def ReLU_deriv(Z):
     return Z > 0
 
 #one hot converts each number into a matrix
-#ex. [[1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-#     [0, 1, ...            0, 0, 0]
-#     [0, 0, 1, ...         0, 0, 0]
-#     ...                         0]]
 def one_hot(Y):
     one_hot_Y = np.zeros((Y.max()+1, Y.size))
     one_hot_Y[Y, np.arange(Y.size)] = 1
@@ -118,8 +107,7 @@ def one_hot(Y):
 #cross entropy loss chain rule
 def back_prop(w2, z1, a1, z2, a2, N, X, Y):
     one_hot_Y = one_hot(Y)
-    dz2 = a2.T - one_hot_Y.T 
-    dz2 = dz2.T
+    dz2 = a2 - one_hot_Y
     dw2 = 1 / N * dz2.dot(a1.T)
     db2 = 1 / N * np.sum(dz2)
     dz1 = w2.T.dot(dz2) * ReLU_deriv(z1)
@@ -167,7 +155,7 @@ def display_results(X, Y, a2):
     plt.show()
 
 def decode(number):
-    with open(r"Notebook_wAlex\data\emnist_balanced_mapping.txt", 'r') as mapping:
+    with open(r"data\emnist_balanced_mapping.txt", 'r') as mapping:
         convert = mapping.readlines()
         for line in convert:
             linenum, unicodedecode = line.split()
