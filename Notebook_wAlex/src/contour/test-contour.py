@@ -1,4 +1,4 @@
-from contourfind import grayscale, shape, contour
+from src.contour.contourfind import grayscale, shape, contour
 import pandas
 from PIL import Image
 import numpy as np

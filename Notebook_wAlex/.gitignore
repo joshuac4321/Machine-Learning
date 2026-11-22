@@ -1,7 +1,7 @@
 data/*
 !data/.gitkeep
-!data/emnist-test-sample/
-!data/emnist-balanced-mapping/
+!data/emnist_sample/
+!data/emnist_balanced/mapping/
 !data/handwriting/
 __pycache__/
 .vscode/
